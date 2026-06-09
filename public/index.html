@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Modern Node.js SSH IDE</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+    <header>
+        <input type="text" id="host" placeholder="IP сервера">
+        <input type="text" id="user" placeholder="Пользователь" value="root">
+        <input type="password" id="pass" placeholder="Пароль">
+        <button onclick="connect()">Подключиться</button>
+        <button id="term-toggle-btn" onclick="toggleTerminalWindow()" style="margin-left: auto; display: none; background-color: #333;">📺 Открыть терминал</button>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>ТЕКУЩАЯ ПАПКА</h3>
+            <div id="current-path-label">Путь: /</div>
+            <select id="folder-select" onchange="onFolderChange()">
+                <option value="" disabled selected>Подключитесь...</option>
+            </select>
+            
+            <div class="file-toolbar" id="file-actions-bar" style="display: none; margin-top: 10px; display: flex; gap: 5px;">
+                <button onclick="createNewItem('file')" title="Создать файл" style="flex: 1; background-color: #2d2d2d; font-size: 12px; border: 1px solid #555;">+ Файл</button>
+                <button onclick="createNewItem('folder')" title="Создать папку" style="flex: 1; background-color: #2d2d2d; font-size: 12px; border: 1px solid #555;">+ Папка</button>
+                <button onclick="renameCurrentItem()" title="Переименовать" style="background-color: #2d2d2d; font-size: 12px; border: 1px solid #555;">✏️</button>
+                <button onclick="deleteCurrentItem()" title="Удалить" style="background-color: #a91e1e; font-size: 12px; border: none;">🗑️</button>
+            </div>
+            
+            <h4>ФАЙЛЫ В ПАПКЕ</h4>
+            <div class="files-container" id="files-list">
+                <div class="empty-list-label">Список пуст</div>
+            </div>
+        </div>
+
+        <div class="right-zone">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <span id="current-file-title">Файл не выбран</span>
+                    <button onclick="saveFile()" style="background-color: #28a745;">Сохранить файл</button>
+                </div>
+                <textarea id="code-editor" placeholder="// Содержимое файла появится здесь..."></textarea>
+            </div>
+        </div>
+
+        <div class="floating-terminal" id="window-terminal" style="display: none;">
+            <div class="terminal-window-header" id="window-terminal-header">
+                <span>⚡ Интерактивный WebSocket-Терминал</span>
+                <button onclick="toggleTerminalWindow()" style="background-color: #e81123;">Скрыть</button>
+            </div>
+            <div id="terminal-canvas"></div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="status">Статус: Ожидание подключения</div>
+
+    <script src="app.js"></script>
+</body>
+</html>
